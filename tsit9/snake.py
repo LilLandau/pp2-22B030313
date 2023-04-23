@@ -25,6 +25,10 @@ SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Snake_game")
 clock = pygame.time.Clock()
 
+
+ADDFOOD = pygame.USEREVENT + 1
+pygame.time.set_timer(ADDFOOD, 5000)
+
 running = True
 while running:
     SCREEN.fill((0, 0, 0))
@@ -38,6 +42,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == ADDFOOD:   #респавн еды каждые 5 секунд
+             food = randrange(0, WIDTH-x, BLOCK_SIZE), randrange(0, HEIGHT-y, BLOCK_SIZE)    #респавн яблока, исключающий взаимные координаты со змейкой
+
 
     #рисую змейку
     for i, j in snake:
@@ -55,7 +62,7 @@ while running:
 
     #столкновение еды и змейки
     if snake[-1] == food:
-        food = randrange(0, WIDTH, BLOCK_SIZE), randrange(0, HEIGHT, BLOCK_SIZE)    #респавн яблока
+        food = randrange(0, WIDTH-x, BLOCK_SIZE), randrange(0, HEIGHT-y, BLOCK_SIZE)    #респавн яблока, исключающий взаимные координаты со змейкой
         len_snake += 1
         score += 1
 

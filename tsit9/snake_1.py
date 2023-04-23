@@ -9,6 +9,8 @@ FPS = 5
 #начальные координаты змейки и еды
 x, y = randrange(0, WIDTH, BLOCK_SIZE), randrange(0, HEIGHT, BLOCK_SIZE)
 food = randrange(0, WIDTH, BLOCK_SIZE), randrange(0, HEIGHT, BLOCK_SIZE)
+alt_food = randrange(0, WIDTH-x, BLOCK_SIZE), randrange(0, HEIGHT-y, BLOCK_SIZE)
+food_flag = randrange(0, 2)
 
 
 #параметры змейки
@@ -25,6 +27,10 @@ SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Snake_game")
 clock = pygame.time.Clock()
 
+#респавн еды
+ADDFOOD = pygame.USEREVENT + 1
+pygame.time.set_timer(ADDFOOD, 10000)
+
 running = True
 while running:
     SCREEN.fill((0, 0, 0))
@@ -38,6 +44,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == ADDFOOD:   #респавн еды каждые 5 секунд
+            food = randrange(0, WIDTH-x, BLOCK_SIZE), randrange(0, HEIGHT-y, BLOCK_SIZE)    #респавн яблока, исключающий взаимные координаты со змейкой
+            alt_food = randrange(0, WIDTH-x, BLOCK_SIZE), randrange(0, HEIGHT-y, BLOCK_SIZE)
+
+                  
 
     #рисую змейку
     for i, j in snake:
@@ -58,6 +69,10 @@ while running:
         food = randrange(0, WIDTH-x, BLOCK_SIZE), randrange(0, HEIGHT-y, BLOCK_SIZE)    #респавн яблока, исключающий взаимные координаты со змейкой
         len_snake += 1
         score += 1
+    if snake[-1] == alt_food:
+        alt_food = randrange(0, WIDTH-x, BLOCK_SIZE), randrange(0, HEIGHT-y, BLOCK_SIZE)    #респавн яблока, исключающий взаимные координаты со змейкой
+        len_snake += 2
+        score += 2
 
     #управление змейкой
     pressed = pygame.key.get_pressed()
@@ -73,9 +88,14 @@ while running:
     #рисую еду
     pygame.draw.rect(
         SCREEN,
-        (255, 0, 00),
+        (255, 0, 0),
         (*food, BLOCK_SIZE, BLOCK_SIZE)
     )
+    pygame.draw.rect(
+        SCREEN,
+        (0, 0, 255),
+        (*alt_food, BLOCK_SIZE, BLOCK_SIZE)
+    )    
 
     #выход за края
     if x < 0 or x > WIDTH - BLOCK_SIZE: running = False
